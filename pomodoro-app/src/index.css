@@ -2,19 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── 全局样式 ──────────────────────────────── */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ── Precision Glass · Token System ────────────
+   glass-deep  · rgba(255,255,255, 0.08) — 底层玻璃
+   glass-mid   · rgba(255,255,255, 0.22) — 控件基底
+   glass-high  · rgba(255,255,255, 0.55) — 悬停/激活
+   ink         · rgba(0,0,0, 0.88)        — 主文字
+   ink-faint   · rgba(0,0,0, 0.40)        — 次级文字
+   accent      · #FF3B30 / #34C759        — 工作/休息
+   ──────────────────────────────────────────── */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 html, body, #root {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  user-select: none;
-  -webkit-user-select: none;
+  width: 100%; height: 100%; overflow: hidden;
+  user-select: none; -webkit-user-select: none;
 }
 
 body {
@@ -22,46 +23,176 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: transparent;
+  color: rgba(0,0,0,0.88);
 }
 
-/* ── 毛玻璃底层 ────────────────────────────── */
-.glass-bg {
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
+/* ── 玻璃层级 ────────────────────────────────── */
+.glass-deep  { background: rgba(255,255,255,0.08); }
+.glass-mid   { background: rgba(255,255,255,0.22); backdrop-filter: blur(3px) saturate(140%); -webkit-backdrop-filter: blur(3px) saturate(140%); }
+.glass-high  { background: rgba(255,255,255,0.55); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); }
+
+/* ── 背景层 ──────────────────────────────────── */
+.bg-img-overlay {
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+}
+.bg-vignette {
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.18) 100%);
 }
 
-.glass-bg-dark {
-  background: rgba(30, 30, 35, 0.55);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
+/* ── 环形仪表 (Precision Ring) ────────────────── */
+.ring-track {
+  transition: stroke 0.6s ease;
 }
-
-/* ── 环形进度条 ────────────────────────────── */
-.ring-progress {
+.ring-fill {
   transition: stroke-dashoffset 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.ring-glow {
+  transition: opacity 0.3s ease;
+}
 
-/* ── 按钮弹性过渡 ──────────────────────────── */
+/* ── 呼吸环动画 (Breathing Ring) ──────────────── */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.015); }
+}
+.ring-breathe {
+  animation: breathe 4s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* 减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .ring-breathe {
+    animation: none;
+  }
+}
+
+/* ── 刻度线 (Hairline Index Marks) ────────────── */
+.ring-mark {
+  stroke: rgba(0,0,0,0.06);
+  transition: stroke 0.4s ease;
+}
+
+/* ── 按钮弹性 ─────────────────────────────────── */
 .btn-spring {
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.btn-spring:hover  { transform: scale(1.03); }
+.btn-spring:active { transform: scale(0.97); }
+
+/* ── 主按钮 (渐变 + 深度投影) ──────────────────── */
+.btn-primary {
+  background: linear-gradient(135deg, #FF5F57, #FF3B30);
+  box-shadow:
+    0 4px 16px rgba(255,59,48,0.30),
+    0 1px 3px  rgba(255,59,48,0.15);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #FF3B30, #E53935);
+  box-shadow:
+    0 6px 22px rgba(255,59,48,0.40),
+    0 2px 4px  rgba(255,59,48,0.20);
+}
+.btn-primary:active {
+  box-shadow:
+    0 2px 8px rgba(255,59,48,0.25),
+    0 1px 2px  rgba(255,59,48,0.10);
 }
 
-.btn-spring:hover {
-  transform: scale(1.05);
+.btn-primary.break {
+  background: linear-gradient(135deg, #34C759, #30B350);
+  box-shadow:
+    0 4px 16px rgba(52,199,89,0.30),
+    0 1px 3px  rgba(52,199,89,0.15);
+}
+.btn-primary.break:hover {
+  background: linear-gradient(135deg, #30B350, #28A745);
+  box-shadow:
+    0 6px 22px rgba(52,199,89,0.40),
+    0 2px 4px  rgba(52,199,89,0.20);
 }
 
-.btn-spring:active {
-  transform: scale(0.95);
+.btn-primary.pause {
+  background: linear-gradient(135deg, #FF9F0A, #FF8C00);
+  box-shadow:
+    0 4px 16px rgba(255,159,10,0.30),
+    0 1px 3px  rgba(255,159,10,0.15);
+}
+.btn-primary.pause:hover {
+  background: linear-gradient(135deg, #FF8C00, #E07B00);
+  box-shadow:
+    0 6px 22px rgba(255,159,10,0.40),
+    0 2px 4px  rgba(255,159,10,0.20);
 }
 
-/* ── 标题栏拖拽区 ──────────────────────────── */
-.drag-region {
-  -webkit-app-region: drag;
-  app-region: drag;
+/* ── 次按钮 (玻璃胶囊) ─────────────────────────── */
+.btn-ghost {
+  background: rgba(255,255,255,0.40);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.5);
+}
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.65);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.6);
 }
 
-.no-drag {
-  -webkit-app-region: no-drag;
-  app-region: no-drag;
+/* ── 模式切换胶囊 ──────────────────────────────── */
+.mode-capsule {
+  background: rgba(255,255,255,0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,0.5),
+    0 2px 8px rgba(0,0,0,0.05);
 }
+.mode-capsule button {
+  transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+}
+.mode-capsule button.active {
+  background: white;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.10),
+    0 1px 2px rgba(0,0,0,0.04);
+}
+
+/* ── 番茄进度点 ────────────────────────────────── */
+.dot-empty  { background: rgba(0,0,0,0.06); transform: scale(0.75); }
+.dot-filled {
+  background: #FF3B30;
+  box-shadow: 0 0 8px rgba(255,59,48,0.45), 0 0 2px rgba(255,59,48,0.25);
+  transform: scale(1);
+}
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 999px;
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── 标题栏 ────────────────────────────────────── */
+.drag-region { -webkit-app-region: drag; app-region: drag; }
+.no-drag     { -webkit-app-region: no-drag; app-region: no-drag; }
+
+.traffic-btn {
+  width: 13px; height: 13px; border-radius: 999px;
+  transition: all 0.2s ease;
+  display: flex; align-items: center; justify-content: center;
+}
+.traffic-btn .traffic-icon {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.traffic-btn:hover .traffic-icon { opacity: 1; }
+
+/* ── 眉标字 ────────────────────────────────────── */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(0,0,0,0.38);
+}
+.eyebrow-work  { color: rgba(255,59,48,0.55); }
+.eyebrow-break { color: rgba(52,199,89,0.55); }
